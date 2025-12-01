@@ -2,6 +2,8 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
+#include "esphome/components/text_sensor/text_sensor.h"  // 👈 add this
+#include <string>                                        // 👈 and this
 
 namespace esphome {
 namespace honeywell_galaxy7_keypad {
@@ -11,6 +13,15 @@ class HoneywellGalaxy7Keypad : public uart::UARTDevice, public Component {
   void setup() override;
   void loop() override;
   void dump_config() override;
+
+  // API service: write data to RS485
+  void api_write_rs485(const std::string &data);
+
+  // Optional RX text sensor hook
+  void set_rx_text_sensor(text_sensor::TextSensor *sens) { this->rx_sens_ = sens; }
+
+ protected:
+  text_sensor::TextSensor *rx_sens_{nullptr};
 };
 
 }  // namespace honeywell_galaxy7_keypad

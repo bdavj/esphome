@@ -1,5 +1,5 @@
 import esphome.codegen as cg
-from esphome.components import uart
+from esphome.components import text_sensor, uart
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
@@ -13,7 +13,12 @@ HoneywellGalaxy7Keypad = galaxy_ns.class_(
 )
 
 CONFIG_SCHEMA = (
-    cv.Schema({cv.GenerateID(): cv.declare_id(HoneywellGalaxy7Keypad)})
+    cv.Schema(
+        {
+            cv.GenerateID(): cv.declare_id(HoneywellGalaxy7Keypad),
+            cv.Optional("rs485_rx_id"): cv.use_id(text_sensor.TextSensor),
+        }
+    )
     .extend(uart.UART_DEVICE_SCHEMA)
     .extend(cv.COMPONENT_SCHEMA)
 )
@@ -27,3 +32,13 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
+
+    # If you want an RX text_sensor, make sure YAML sets rs485_rx_id
+    rx = config.get("rs485_rx_id")
+    if rx is not None:
+        sens = yield cg.get_variable(rx)
+        cg.add(var.set_rx_text_sensor(sens))
+
+    # Register API service
+    # svc = cg.RawExpression("[] (std::string data) { /* placeholder */ }")
+    cg.add_api_service("write_rs485", {"data": "string"}, var.api_write_rs485)
