@@ -40,5 +40,5 @@ async def to_code(config):
         sens = await cg.get_variable(rx)
         cg.add(var.set_rx_text_sensor(sens))
 
-    # Register API service -> calls HoneywellGalaxy7Keypad::api_write_rs485
-    cg.add_api_service("write_rs485", {"data": "string"}, var.api_write_rs485)
+    # ❌ NO cg.add_api_service HERE
+    # The API service itself is declared in YAML and calls var.api_write_rs485()
