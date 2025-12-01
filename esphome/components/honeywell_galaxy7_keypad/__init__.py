@@ -3,6 +3,8 @@ from esphome.components import uart
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
+# Honeywell Galaxy 7 Keypad - bdavj
+
 DEPENDENCIES = ["uart"]
 
 galaxy_ns = cg.esphome_ns.namespace("honeywell_galaxy7_keypad")
