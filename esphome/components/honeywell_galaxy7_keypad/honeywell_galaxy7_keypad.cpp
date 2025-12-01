@@ -16,17 +16,17 @@ void HoneywellGalaxy7Keypad::setup() {
   this->write_byte(initialize_cmd);
 
   uint8_t response;
-  if (!this->read_byte(&response)) {
-    ESP_LOGI(TAG, "Nothing on the bus!");
-    this->mark_failed();  // Mark the component as failed if communication fails
-    return;
-  }
-  if (response != 0) {  // Example check for a specific response
-    ESP_LOGE(TAG, "Initialization failed; response: %d", response);
-    this->mark_failed();  // Mark the component as failed if the response is not
-                          // as expected
-    return;
-  }
+  /*   if (!this->read_byte(&response)) {
+      ESP_LOGI(TAG, "Nothing on the bus!");
+      this->mark_failed();  // Mark the component as failed if communication fails
+      return;
+    }
+    if (response != 0) {  // Example check for a specific response
+      ESP_LOGE(TAG, "Initialization failed; response: %d", response);
+      this->mark_failed();  // Mark the component as failed if the response is not
+                            // as expected
+      return;
+    } */
 }
 
 void HoneywellGalaxy7Keypad::loop() {}
