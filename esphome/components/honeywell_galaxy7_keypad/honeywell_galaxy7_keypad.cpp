@@ -30,10 +30,20 @@ void HoneywellGalaxy7Keypad::setup() {
 }
 
 void HoneywellGalaxy7Keypad::loop() {
-  static bool logged = false;
-  if (!logged) {
-    ESP_LOGI(TAG, "Honeywell Galaxy keypad loop starting, component alive");
-    logged = true;
+  static uint32_t last_log = 0;
+  uint32_t now = millis();
+
+  if (now - last_log > 5000) {
+    last_log = now;
+
+    ESP_LOGI(TAG, "Sending BEN test frame, millis=%u", now);
+
+    // Create a string "BEN 123456"
+    char msg[32];
+    snprintf(msg, sizeof(msg), "BEN %u\n", now);
+
+    // Write string to RS485 UART
+    this->write_array((const uint8_t *) msg, strlen(msg));
   }
 }
 
