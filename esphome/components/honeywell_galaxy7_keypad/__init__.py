@@ -12,11 +12,13 @@ HoneywellGalaxy7Keypad = galaxy_ns.class_(
     "HoneywellGalaxy7Keypad", uart.UARTDevice, cg.Component
 )
 
+CONF_RS485_RX_ID = "rs485_rx_id"
+
 CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(HoneywellGalaxy7Keypad),
-            cv.Optional("rs485_rx_id"): cv.use_id(text_sensor.TextSensor),
+            cv.Optional(CONF_RS485_RX_ID): cv.use_id(text_sensor.TextSensor),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
@@ -33,12 +35,10 @@ async def to_code(config):
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
-    # If you want an RX text_sensor, make sure YAML sets rs485_rx_id
-    rx = config.get("rs485_rx_id")
+    rx = config.get(CONF_RS485_RX_ID)
     if rx is not None:
-        sens = yield cg.get_variable(rx)
+        sens = await cg.get_variable(rx)
         cg.add(var.set_rx_text_sensor(sens))
 
-    # Register API service
-    # svc = cg.RawExpression("[] (std::string data) { /* placeholder */ }")
+    # Register API service -> calls HoneywellGalaxy7Keypad::api_write_rs485
     cg.add_api_service("write_rs485", {"data": "string"}, var.api_write_rs485)
