@@ -10,11 +10,14 @@ void HoneywellGalaxy7Keypad::setup() {
   // Serial/UART device initialization is typically done here.
   // Note that a number of read/write methods are available in the UARTDevice
   // class. See "uart/uart.h" for details.
+  ESP_LOGI(TAG, "Honeywell Galaxy keypad setup starting");
+
   uint8_t initialize_cmd = 0x12;  // Example command to initialize the device
   this->write_byte(initialize_cmd);
 
   uint8_t response;
   if (!this->read_byte(&response)) {
+    ESP_LOGI(TAG, "Nothing on the bus!");
     this->mark_failed();  // Mark the component as failed if communication fails
     return;
   }
