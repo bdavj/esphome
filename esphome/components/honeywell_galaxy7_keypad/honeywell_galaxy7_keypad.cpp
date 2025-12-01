@@ -29,7 +29,13 @@ void HoneywellGalaxy7Keypad::setup() {
     } */
 }
 
-void HoneywellGalaxy7Keypad::loop() {}
+void HoneywellGalaxy7Keypad::loop() {
+  static bool logged = false;
+  if (!logged) {
+    ESP_LOGI(TAG, "Honeywell Galaxy keypad loop starting, component alive");
+    logged = true;
+  }
+}
 
 void HoneywellGalaxy7Keypad::dump_config() { ESP_LOGCONFIG(TAG, "Honeywell Galaxy 7 Keypad"); }
 
