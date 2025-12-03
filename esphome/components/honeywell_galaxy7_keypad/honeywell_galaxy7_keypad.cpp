@@ -7,6 +7,21 @@ namespace honeywell_galaxy7_keypad {
 static const char *TAG = "honeywell_galaxy7_keypad.component";
 static const uint8_t poll[] = {0x10, 0x00, 0x0E, 0xC8};
 
+uint8_t HoneywellGalaxy7Keypad::galaxy_checksum(const std::vector<uint8_t> &data) {
+  uint32_t temp = 0xAA;
+  for (auto b : data) {
+    temp += b;
+  }
+  return ((temp >> 24) & 0xFF) + ((temp >> 16) & 0xFF) + ((temp >> 8) & 0xFF) + (temp & 0xFF);
+}
+
+void HoneywellGalaxy7Keypad::send_frame(const std::vector<uint8_t> &payload) {
+  // Copy + append checksum
+  std::vector<uint8_t> frame(payload);
+  frame.push_back(galaxy_checksum(payload));
+  this->write_array(frame.data(), frame.size());
+}
+
 void HoneywellGalaxy7Keypad::setup() {
   ESP_LOGI(TAG, "Honeywell Galaxy keypad setup starting");
 
@@ -79,3 +94,10 @@ void HoneywellGalaxy7Keypad::dump_config() { ESP_LOGCONFIG(TAG, "Honeywell Galax
 
 }  // namespace honeywell_galaxy7_keypad
 }  // namespace esphome
+
+// uint8_t payload[] = { device_id, cmd, arg };  // whatever bytes, no checksum
+// uint8_t cs = galaxy_checksum(payload, sizeof(payload));
+// uint8_t frame[sizeof(payload) + 1];
+// memcpy(frame, payload, sizeof(payload));
+// frame[sizeof(payload)] = cs;
+// this->write_array(frame, sizeof(frame));

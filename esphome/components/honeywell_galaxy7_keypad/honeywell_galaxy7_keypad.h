@@ -14,6 +14,9 @@ class HoneywellGalaxy7Keypad : public uart::UARTDevice, public Component {
   void loop() override;
   void dump_config() override;
 
+  uint8_t galaxy_checksum(const std::vector<uint8_t> &data);
+  void send_frame(const std::vector<uint8_t> &payload);
+
   // API service: write data to RS485
   void api_write_rs485(const std::string &data);
 
