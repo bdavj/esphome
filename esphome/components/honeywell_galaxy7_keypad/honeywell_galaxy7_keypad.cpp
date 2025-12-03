@@ -34,7 +34,7 @@ void HoneywellGalaxy7Keypad::loop() {
     this->read_byte(&b);
 
     // For now just dump hex to logs or your sensor
-    // ESP_LOGI(TAG, "RX: 0x%02X", b);
+    ESP_LOGI(TAG, "RX: 0x%02X", b);
 
     if (this->rx_sens_) {
       static std::string rxbuf;
