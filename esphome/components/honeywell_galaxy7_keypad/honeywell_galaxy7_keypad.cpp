@@ -35,6 +35,7 @@ void HoneywellGalaxy7Keypad::loop() {
     ESP_LOGI(TAG, "RX: 0x%02X", b);
 
     if (this->rx_sens_ != nullptr) {
+      ESP_LOGI(TAG, "Here1");
       static std::string rxbuf;
 
       // Always hex-escape for now – simpler & clearer
@@ -42,7 +43,10 @@ void HoneywellGalaxy7Keypad::loop() {
       sprintf(buf, "\\x%02X", b);
       rxbuf += buf;
 
+      ESP_LOGI(TAG, "Here2");
       this->rx_sens_->publish_state(rxbuf);
+
+      ESP_LOGI(TAG, "Here3");
     }
   }
 }
