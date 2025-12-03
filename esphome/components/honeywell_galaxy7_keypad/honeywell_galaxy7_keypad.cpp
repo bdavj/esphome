@@ -32,20 +32,15 @@ void HoneywellGalaxy7Keypad::loop() {
   while (this->available()) {
     uint8_t b;
     this->read_byte(&b);
-
-    // For now just dump hex to logs or your sensor
     ESP_LOGI(TAG, "RX: 0x%02X", b);
 
-    if (this->rx_sens_) {
+    if (this->rx_sens_ != nullptr) {
       static std::string rxbuf;
 
-      if (b >= 0x10 && b <= 0x7E) {
-        rxbuf.push_back((char) b);
-      } else {
-        char buf[5];
-        sprintf(buf, "\\x%02X", b);
-        rxbuf += buf;
-      }
+      // Always hex-escape for now – simpler & clearer
+      char buf[5];
+      sprintf(buf, "\\x%02X", b);
+      rxbuf += buf;
 
       this->rx_sens_->publish_state(rxbuf);
     }
