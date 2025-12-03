@@ -29,6 +29,7 @@ void HoneywellGalaxy7Keypad::setup() {
 
   // Init handshake can be made real later – for now we just blast a byte
 }
+
 void HoneywellGalaxy7Keypad::loop() {
   static uint32_t last_init_poll = 0;
   static uint32_t last_activity_poll = 0;
@@ -115,6 +116,15 @@ void HoneywellGalaxy7Keypad::loop() {
 
   // Anything else: ignore by default
   // ESP_LOGD(TAG, "Unhandled frame type, ignoring");
+}
+
+void HoneywellGalaxy7Keypad::api_write_rs485(const std::string &data) {
+  // Add newline so it shows nice on USB dongle / terminal
+  std::string out = data;
+  out += "\n";
+
+  this->write_array(reinterpret_cast<const uint8_t *>(out.data()), out.size());
+  ESP_LOGI(TAG, "Wrote via API: %s", data.c_str());
 }
 
 void HoneywellGalaxy7Keypad::dump_config() { ESP_LOGCONFIG(TAG, "Honeywell Galaxy 7 Keypad"); }
