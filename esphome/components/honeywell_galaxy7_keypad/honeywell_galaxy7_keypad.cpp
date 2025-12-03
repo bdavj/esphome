@@ -39,7 +39,7 @@ void HoneywellGalaxy7Keypad::loop() {
     if (this->rx_sens_) {
       static std::string rxbuf;
 
-      if (b >= 0x20 && b <= 0x7E) {
+      if (b >= 0x10 && b <= 0x7E) {
         rxbuf.push_back((char) b);
       } else {
         char buf[5];
