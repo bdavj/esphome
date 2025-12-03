@@ -28,26 +28,23 @@ void HoneywellGalaxy7Keypad::loop() {
     this->write_array(poll, sizeof(poll));
   }
 
-  // ---- RX: drain anything the keypad replied with ----
+  // ---- RX: read whatever's there into a *local* buffer ----
+  std::string rxbuf;  // 👈 NOT static
+
   while (this->available()) {
     uint8_t b;
     this->read_byte(&b);
     ESP_LOGI(TAG, "RX: 0x%02X", b);
 
-    if (this->rx_sens_ != nullptr) {
-      ESP_LOGI(TAG, "Here1");
-      static std::string rxbuf;
+    char buf[5];
+    sprintf(buf, "\\x%02X", b);
+    rxbuf += buf;
+  }
 
-      // Always hex-escape for now – simpler & clearer
-      char buf[5];
-      sprintf(buf, "\\x%02X", b);
-      rxbuf += buf;
-
-      ESP_LOGI(TAG, "Here2");
-      this->rx_sens_->publish_state(rxbuf);
-
-      ESP_LOGI(TAG, "Here3");
-    }
+  // Only publish once per loop call, with a short frame
+  if (!rxbuf.empty() && this->rx_sens_ != nullptr) {
+    ESP_LOGI(TAG, "Publishing frame: %s", rxbuf.c_str());
+    this->rx_sens_->publish_state(rxbuf);
   }
 }
 
