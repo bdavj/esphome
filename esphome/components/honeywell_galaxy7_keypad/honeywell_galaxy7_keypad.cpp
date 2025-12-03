@@ -5,12 +5,12 @@ namespace esphome {
 namespace honeywell_galaxy7_keypad {
 
 static const char *TAG = "honeywell_galaxy7_keypad.component";
+static const uint8_t poll[] = {0x10, 0x00, 0x0E, 0xC8};
 
 void HoneywellGalaxy7Keypad::setup() {
   ESP_LOGI(TAG, "Honeywell Galaxy keypad setup starting");
 
-  uint8_t initialize_cmd = 0x12;  // Example command to initialize the device
-  this->write_byte(initialize_cmd);
+  this->write_array(poll, sizeof(poll));
 
   // Init handshake can be made real later – for now we just blast a byte
 }
@@ -18,23 +18,30 @@ void HoneywellGalaxy7Keypad::setup() {
 void HoneywellGalaxy7Keypad::loop() {
   // Example: read all available bytes from RS485
   while (this->available()) {
-    uint8_t b;
-    this->read_byte(&b);
-
-    if (this->rx_sens_) {
-      static std::string rxbuf;
-
-      if (b >= 0x20 && b <= 0x7E) {
-        rxbuf.push_back((char) b);
-      } else {
-        char buf[5];
-        sprintf(buf, "\\x%02X", b);
-        rxbuf += buf;
-      }
-
-      // publish quickly (can be throttled later)
-      this->rx_sens_->publish_state(rxbuf);
+    static uint32_t last = 0;
+    uint32_t now = millis();
+    if (now - last > 1000) {  // every 1s
+      last = now;
+      this->write_array(poll, sizeof(poll));
     }
+
+    // uint8_t b;
+    // this->read_byte(&b);
+
+    // if (this->rx_sens_) {
+    //   static std::string rxbuf;
+
+    //   if (b >= 0x20 && b <= 0x7E) {
+    //     rxbuf.push_back((char) b);
+    //   } else {
+    //     char buf[5];
+    //     sprintf(buf, "\\x%02X", b);
+    //     rxbuf += buf;
+    //   }
+
+    //   // publish quickly (can be throttled later)
+    //   this->rx_sens_->publish_state(rxbuf);
+    // }
   }
 }
 
