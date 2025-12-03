@@ -23,6 +23,7 @@ void HoneywellGalaxy7Keypad::loop() {
     if (now - last > 1000) {  // every 1s
       last = now;
       this->write_array(poll, sizeof(poll));
+      ESP_LOGI(TAG, "Polled keypad");
     }
 
     // uint8_t b;
