@@ -23,7 +23,7 @@ void HoneywellGalaxy7Keypad::loop() {
   if (now - last > 400) {  // every 400ms
     last = now;
 
-    const uint8_t poll[] = {0x10, 0x00, 0x0E, 0xC8};
+    const uint8_t poll[] = {0x20, 0x00, 0x0E, 0xC8};
     ESP_LOGI(TAG, "Sending poll to keypad");
     this->write_array(poll, sizeof(poll));
   }
