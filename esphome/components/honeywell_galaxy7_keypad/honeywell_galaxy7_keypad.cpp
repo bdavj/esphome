@@ -16,12 +16,12 @@ void HoneywellGalaxy7Keypad::setup() {
 }
 
 void HoneywellGalaxy7Keypad::loop() {
-  ESP_LOGI(TAG, "Polled keypad");
   // Example: read all available bytes from RS485
   while (this->available()) {
     static uint32_t last = 0;
     uint32_t now = millis();
-    if (now - last > 1000) {  // every 1s
+    if (now - last > 400) {  // every 1s
+      ESP_LOGI(TAG, "Polled keypad");
       last = now;
       this->write_array(poll, sizeof(poll));
       ESP_LOGI(TAG, "Polled keypad");
